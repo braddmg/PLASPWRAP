@@ -4,11 +4,8 @@ set -Eeuo pipefail
 STEP="init"
 trap 'echo "❌ Failed at step: ${STEP}" >&2' ERR
 
-# Added per request
 log() { printf '[%s] %s\n' "$(date +'%F %T')" "$*" >&2; }
 has_content() { find "$1" -mindepth 1 -print -quit 2>/dev/null | grep -q .; }
-
-log() { echo "==> $*"; }
 
 FORCE=0
 if [[ "${1:-}" == "--force" || "${1:-}" == "--forece" ]]; then
@@ -32,6 +29,15 @@ fi
 BASE="$($PM info --base)"
 env_path() { echo "$BASE/envs/$1"; }
 env_exists() { [[ -d "$(env_path "$1")/conda-meta" ]]; }
+
+# In case using miniforge
+export -f log
+if [[ "$PM" == "conda" ]]; then
+  CONDA_INIT="source \"$BASE/etc/profile.d/conda.sh\"; "
+else
+  CONDA_INIT=""
+fi
+# >>> End addition <<<
 
 add_headless_hooks() {
   local tgt="$1"
@@ -93,7 +99,7 @@ mkenv() {
   [[ -d "$p" ]] && rm -rf "$p"
   STEP="create env $name"
   log "$name: creating..."
-  bash -lc "$*"
+  bash -lc "$CONDA_INIT$*"
   log "$name: ready"
 }
 
@@ -158,4 +164,3 @@ rm -rf "$tmp"
 
 STEP="done"
 log "All done."
-
