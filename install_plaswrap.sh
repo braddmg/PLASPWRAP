@@ -1,108 +1,162 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 0) Ensure mamba is available in base
-if ! command -v mamba &>/dev/null; then
-  echo "Installing mamba in base"
-  conda install -n base -y -c conda-forge mamba > /dev/null
+STEP="init"
+trap 'echo "❌ Failed at step: ${STEP}" >&2' ERR
+log() { echo "==> $*"; }
+
+FORCE=0
+if [[ "${1:-}" == "--force" || "${1:-}" == "--forece" ]]; then
+  FORCE=1
 fi
 
-# 1.1) Prepare variables
-echo "Installing PLASWRAP"
+STEP="create tmp workspace"
+tmp="$(mktemp -d)"
+cd "$tmp"
 
-LINUX_X86_URL="https://github.com/braddmg/PLASWRAP/releases/download/v0.1.0/plaswrap-0.1.0-linux-x86_64.tar.gz"
-
-ENV_NAME="plaswrap"
-
-if command -v conda >/dev/null 2>&1; then
-  BASE="$(conda info --base)"
-elif command -v mamba >/dev/null 2>&1; then
-  BASE="$(mamba info --base)"
+STEP="detect package manager"
+if command -v mamba >/dev/null 2>&1; then
+  PM="mamba"
+elif command -v conda >/dev/null 2>&1; then
+  PM="conda"
 else
-  echo "❌ No conda/mamba detected." >&2
+  echo "conda/mamba not found in PATH" >&2
   exit 1
 fi
 
-TARGET="$BASE/envs/$ENV_NAME"
+BASE="$($PM info --base)"
+env_path() { echo "$BASE/envs/$1"; }
+env_exists() { [[ -d "$(env_path "$1")/conda-meta" ]]; }
 
-# 1.2) Prepare temp workspace
-tmp=$(mktemp -d)
-cd "$tmp"
+add_headless_hooks() {
+  local tgt="$1"
+  mkdir -p "$tgt/etc/conda/activate.d" "$tgt/etc/conda/deactivate.d" "$HOME/.config/matplotlib"
+  cat > "$tgt/etc/conda/activate.d/zz-plaswrap-headless.sh" <<'EOF'
+export QT_QPA_PLATFORM=${QT_QPA_PLATFORM:-offscreen}
+export MPLBACKEND=${MPLBACKEND:-Agg}
+EOF
+  cat > "$tgt/etc/conda/deactivate.d/zz-plaswrap-headless.sh" <<'EOF'
+unset QT_QPA_PLATFORM
+unset MPLBACKEND
+EOF
+  echo "backend: Agg" > "$HOME/.config/matplotlib/matplotlibrc"
+}
 
-# 1.3) Download and install PLASWRAP
+if (( FORCE == 1 )); then
+  STEP="force cleanup of old env folders"
+  log "Removing existing env folders (force)"
+  for n in plaswrap anvio-8 plasx hotspot plasclass platon; do
+    d="$(env_path "$n")"
+    [[ -d "$d" ]] && rm -rf "$d"
+  done
+fi
 
-echo "⬇️ Downloading $TAR_URL"
-curl -L "$TAR_URL" -o env.tar.gz || wget -O env.tar.gz "$TAR_URL"
+# 1) PLASWRAP (prebuilt env tarball) — quiet
+STEP="install plaswrap"
+ENV_NAME="plaswrap"
+TARGET="$(env_path "$ENV_NAME")"
+TAR_URL="${TAR_URL:-https://github.com/braddmg/PLASWRAP/releases/download/v0.1.1/plaswrap-0.1.1-linux-x86_64.tar.gz}"
 
-echo "📦 Extracting into $TARGET"
-tar -xzf env.tar.gz -C "$TARGET"
+if env_exists "$ENV_NAME" && (( FORCE == 0 )); then
+  log "plaswrap: exists → skip"
+else
+  [[ -d "$TARGET" ]] && rm -rf "$TARGET"
+  log "plaswrap: downloading release 0.1.1"
+  if command -v wget >/dev/null 2>&1; then
+    wget -q --no-check-certificate -O plaswrap.tar.gz "$TAR_URL"
+  else
+    curl -sL -o plaswrap.tar.gz "$TAR_URL"
+  fi
+  [[ -s plaswrap.tar.gz ]] || { echo "failed to download PLASWRAP, please contact: bradd.mendoza@ucr.ac.cr" >&2; exit 2; }
+  log "plaswrap: extracting files"
+  mkdir -p "$TARGET"
+  tar -xzf plaswrap.tar.gz -C "$TARGET"
+  add_headless_hooks "$TARGET"
+  log "plaswrap: installed → $TARGET"
+fi
 
-echo "✅ Installed: $TARGET"
-echo
-echo "Activate with:"
-echo "    conda activate $ENV_NAME"
-echo
-echo "Test with:"
-echo "    plaswrap --help"
-echo "    plaswrap classify --help"
+echo "Activate: conda activate plaswrap"
+echo "Test: plaswrap classify -h"
 
-# 2) Install Anvio-8
-echo "Installing anvio-8"
-mamba create -y --name anvio-8 python=3.10 > /dev/null
-mamba install -y -n anvio-8 \
-  -c conda-forge -c bioconda \
-  python=3.10 sqlite=3.46 prodigal idba mcl \
-  muscle=3.8.1551 famsa hmmer diamond blast \
-  megahit spades bowtie2 bwa graphviz \
-  "samtools>=1.9" trimal iqtree trnascan-se \
-  fasttree vmatch r-base r-tidyverse \
-  r-optparse r-stringi r-magrittr \
-  bioconductor-qvalue meme ghostscript \
-  nodejs=20.12.2 datrie > /dev/null
+mkenv() {
+  local name="$1"; shift
+  STEP="check env $name"
+  if env_exists "$name" && (( FORCE == 0 )); then
+    log "$name: exists → skip"; return 0
+  fi
+  local p; p="$(env_path "$name")"
+  [[ -d "$p" ]] && rm -rf "$p"
+  STEP="create env $name"
+  log "$name: creating..."
+  bash -lc "$*"
+  log "$name: ready"
+}
 
-echo "Downloading Anvio-8 sources"
-curl -sL \
-  https://github.com/merenlab/anvio/releases/download/v8/anvio-8.tar.gz \
-  -o anvio-8.tar.gz
+# 2) anvio-8
+STEP="prepare anvio-8"
+mkenv anvio-8 "
+  $PM create -y --name anvio-8 python=3.10 >/dev/null &&
+  $PM install -y -n anvio-8 -c conda-forge -c bioconda \
+    python=3.10 sqlite=3.46 prodigal idba mcl \
+    muscle=3.8.1551 famsa hmmer diamond blast \
+    megahit spades bowtie2 bwa graphviz \
+    'samtools>=1.9' trimal iqtree trnascan-se \
+    fasttree vmatch r-base r-tidyverse \
+    r-optparse r-stringi r-magrittr \
+    bioconductor-qvalue meme ghostscript \
+    nodejs=20.12.2 datrie >/dev/null &&
+  echo '==> anvio-8: downloading sources, see: https://anvio.org/install/linux/stable' &&
+  curl -sL \
+    https://github.com/merenlab/anvio/releases/download/v8/anvio-8.tar.gz \
+    -o anvio-8.tar.gz &&
+  [[ -s anvio-8.tar.gz ]] &&
+  echo '==> anvio-8: pip install' &&
+  conda run -n anvio-8 pip install anvio-8.tar.gz >/dev/null
+"
 
-echo "Installing anvio-8 via pip"
-conda run -n anvio-8 pip install anvio-8.tar.gz > /dev/null
+# 3) plasx
+STEP="prepare plasx"
+mkenv plasx "
+  $PM create -y --name plasx \
+    -c anaconda -c conda-forge -c bioconda \
+    --override-channels --strict-channel-priority \
+    numpy pandas scipy scikit-learn numba python-blosc mmseqs2=10.6d92c git >/dev/null &&
+  echo '==> plasx: downloading, see: https://github.com/michaelkyu/PlasX' &&
+  rm -rf PlasX &&
+  git clone https://github.com/michaelkyu/PlasX PlasX >/dev/null &&
+  echo '==> plasx: installing' &&
+  cd PlasX
+  conda run -n plasx pip install . >/dev/null
+"
 
-# 3) Install PlasX
-echo "Installing plasx"
-mamba create -y --name plasx \
-  -c anaconda -c conda-forge -c bioconda \
-  --override-channels --strict-channel-priority \
-  numpy pandas scipy scikit-learn numba \
-  python-blosc mmseqs2=10.6d92c git > /dev/null
+# 4) hotspot
+STEP="prepare hotspot"
+mkenv hotspot "
+  echo '==> hotspot: downloading' &&
+  rm -rf HOTSPOT &&
+  git clone https://github.com/Orin-beep/HOTSPOT HOTSPOT >/dev/null &&
+  echo '==> hotspot: installing, see: https://github.com/michaelkyu/PlasX' &&
+  echo '==> hotspot: additionally adding krona: https://github.com/marbl/Krona/wiki' &&
+  $PM env create -y -f HOTSPOT/environment.yaml -n hotspot >/dev/null &&
+  $PM install -y -n hotspot -c bioconda krona >/dev/null
+"
 
-git clone https://github.com/michaelkyu/PlasX > /dev/null
-cd PlasX
-echo "Installing plasx via pip"
-conda run -n plasx pip install . > /dev/null
-cd ..
+# 5) plasclass
+STEP="prepare plasclass"
+echo '==> plasclass: installing'
+mkenv plasclass "$PM create -y -n plasclass -c conda-forge -c bioconda plasclass >/dev/null"
 
-# 4) install HOTSPOT
-echo "Installing hotspot" 
-git clone https://github.com/Orin-beep/HOTSPOT > /dev/null
-mamba env create -y -f HOTSPOT/environment.yaml -n hotspot > /dev/null
-mamba install -n hotspot -c bioconda krona -y
+# 6) platon
+STEP="prepare platon"
+echo '==> platon: installing'
+mkenv platon "$PM create -y -n platon -c conda-forge -c bioconda -c defaults platon >/dev/null"
 
-#5) install plasclass
-echo "Installing plasclass"
-conda create -n plasclass -c bioconda placlass -y
-
-#6) install coveragem
-echo "Installing coveragem"
-conda create -n coverm -c bioconda coverm -y
-
-#7) install platon
-echo "Installing platon"
-conda create -n platon -c conda-forge -c bioconda -c defaults platon -y
-
-# 8) Cleanup & finish
+STEP="cleanup tmp"
 cd /
 rm -rf "$tmp"
-echo "All environments have been created successfully"
+
+STEP="done"
+log "All done."
+
 
 
