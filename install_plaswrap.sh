@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 STEP="init"
 trap 'echo "❌ Failed at step: ${STEP}" >&2' ERR
+
+# Added per request
+log() { printf '[%s] %s\n' "$(date +'%F %T')" "$*" >&2; }
+has_content() { find "$1" -mindepth 1 -print -quit 2>/dev/null | grep -q .; }
+
 log() { echo "==> $*"; }
 
 FORCE=0
@@ -105,12 +110,11 @@ mkenv anvio-8 "
     r-optparse r-stringi r-magrittr \
     bioconductor-qvalue meme ghostscript \
     nodejs=20.12.2 datrie >/dev/null &&
-  echo '==> anvio-8: downloading sources, see: https://anvio.org/install/linux/stable' &&
+log "anvio-8: downloading sources, see: https://anvio.org/install/linux/stable" &&
   curl -sL \
     https://github.com/merenlab/anvio/releases/download/v8/anvio-8.tar.gz \
     -o anvio-8.tar.gz &&
   [[ -s anvio-8.tar.gz ]] &&
-  echo '==> anvio-8: pip install' &&
   conda run -n anvio-8 pip install anvio-8.tar.gz >/dev/null
 "
 
@@ -121,10 +125,9 @@ mkenv plasx "
     -c anaconda -c conda-forge -c bioconda \
     --override-channels --strict-channel-priority \
     numpy pandas scipy scikit-learn numba python-blosc mmseqs2=10.6d92c git >/dev/null &&
-  echo '==> plasx: downloading, see: https://github.com/michaelkyu/PlasX' &&
+  log "plasx: downloading, see: https://github.com/michaelkyu/PlasX" &&
   rm -rf PlasX &&
   git clone https://github.com/michaelkyu/PlasX PlasX >/dev/null &&
-  echo '==> plasx: installing' &&
   cd PlasX
   conda run -n plasx pip install . >/dev/null
 "
@@ -135,20 +138,18 @@ mkenv hotspot "
   echo '==> hotspot: downloading' &&
   rm -rf HOTSPOT &&
   git clone https://github.com/Orin-beep/HOTSPOT HOTSPOT >/dev/null &&
-  echo '==> hotspot: installing, see: https://github.com/michaelkyu/PlasX' &&
-  echo '==> hotspot: additionally adding krona: https://github.com/marbl/Krona/wiki' &&
+  log "hotspot: installing, see: https://github.com/Orin-beep/HOTSPOT" &&
+  log "hotspot: additionally adding krona: https://github.com/marbl/Krona/wiki" &&
   $PM env create -y -f HOTSPOT/environment.yaml -n hotspot >/dev/null &&
   $PM install -y -n hotspot -c bioconda krona >/dev/null
 "
 
 # 5) plasclass
 STEP="prepare plasclass"
-echo '==> plasclass: installing'
 mkenv plasclass "$PM create -y -n plasclass -c conda-forge -c bioconda plasclass >/dev/null"
 
 # 6) platon
 STEP="prepare platon"
-echo '==> platon: installing'
 mkenv platon "$PM create -y -n platon -c conda-forge -c bioconda -c defaults platon >/dev/null"
 
 STEP="cleanup tmp"
@@ -157,6 +158,4 @@ rm -rf "$tmp"
 
 STEP="done"
 log "All done."
-
-
 
