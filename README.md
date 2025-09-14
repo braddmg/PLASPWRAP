@@ -5,10 +5,21 @@ PLASWRAP is pipeline for plasmidomic analysis, which identify high-confidence pa
 # Download the rep
 ```bash
 git clone https://github.com/braddmg/PLASPWRAP
+cd PLASWRAP
 ```
-# Create env
+# run script to install environments
 
 ```bash
-cd PLASWRAP
-  conda env create -f plaswrap.yaml
+bash install_plaswrap.sh
+```
+# Activate plaswrap and download databases
+Select the destination folder with -d and the number of threads to use -t
+```bash
+conda activate plaswrap
+bash download_data.sh -d ~/databases/plaswrap -t 16
+```
+# Test the installation 
+```bash
+plaswrap --help
+plaswrap classify -h
 ```
