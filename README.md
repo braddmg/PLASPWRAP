@@ -10,7 +10,7 @@ cd PLASWRAP
 # run script to install environments
 
 ```bash
-bash install_plaswrap.sh
+bash install_plaswrap.sh --force # --forece will remove previous envs named as the next: anvio-8, plasx, platon, plasclass and hotspot to create new ones
 ```
 # Activate plaswrap and download databases
 Select the destination folder with -d and the number of threads to use -t
