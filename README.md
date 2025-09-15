@@ -19,7 +19,8 @@ conda activate plaswrap
 bash download_data.sh -d ~/databases/plaswrap -t 16
 ```
 # Classify 
-The "classify" function runs a Snakemake workflow to assign plasmid contigs using four tools: plasx, plasclass, platon, and plasmidhunter. You can choose which tools to run instead of using all four. Provide the database path you configured with the earlier download script. The input may include multiple FASTA files; each file is treated as an independent sample. Snakemake can distribute the threads you specify across parallel jobs (across samples and/or steps), allowing multiple tasks to run concurrently.
+The "classify" function runs a Snakemake workflow to assign plasmid contigs using four tools: plasx, plasclass, platon, and plasmidhunter. You can choose which tools to run instead of using all four. <br/> Provide the database path you configured with the earlier download script. The input may include multiple FASTA files; each file is treated as an independent sample. <br/>
+Snakemake can distribute the threads you specify across parallel jobs (across samples and/or steps), allowing multiple tasks to run concurrently.
 ```bash
 plaswrap --help
 plaswrap classify -h
