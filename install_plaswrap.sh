@@ -30,14 +30,14 @@ BASE="$($PM info --base)"
 env_path() { echo "$BASE/envs/$1"; }
 env_exists() { [[ -d "$(env_path "$1")/conda-meta" ]]; }
 
-# In case using miniforge
+# >>> Added for Miniforge support <<<
 export -f log
 if [[ "$PM" == "conda" ]]; then
   CONDA_INIT="source \"$BASE/etc/profile.d/conda.sh\"; "
 else
   CONDA_INIT=""
 fi
-# >>> End addition <<<
+# >>> end <<<
 
 add_headless_hooks() {
   local tgt="$1"
@@ -81,7 +81,18 @@ else
   [[ -s plaswrap.tar.gz ]] || { echo "failed to download PLASWRAP, please contact: bradd.mendoza@ucr.ac.cr" >&2; exit 2; }
   log "plaswrap: extracting files"
   mkdir -p "$TARGET"
-  tar -xzf plaswrap.tar.gz -C "$TARGET"
+
+  first_entry="$(tar -tzf plaswrap.tar.gz | head -1 || true)"
+  if [[ "$first_entry" == */ ]]; then
+    tar -xzf plaswrap.tar.gz -C "$TARGET" --strip-components=1
+  else
+    tar -xzf plaswrap.tar.gz -C "$TARGET"
+  fi
+  if [[ -x "$TARGET/bin/conda-unpack" ]]; then
+    "$TARGET/bin/conda-unpack" >/dev/null 2>&1 || true
+  fi
+  # >>> End addition <<<
+
   add_headless_hooks "$TARGET"
   log "plaswrap: installed → $TARGET"
 fi
@@ -116,7 +127,7 @@ mkenv anvio-8 "
     r-optparse r-stringi r-magrittr \
     bioconductor-qvalue meme ghostscript \
     nodejs=20.12.2 datrie >/dev/null &&
-log "anvio-8: downloading sources, see: https://anvio.org/install/linux/stable" &&
+log \"anvio-8: downloading sources, see: https://anvio.org/install/linux/stable\" &&
   curl -sL \
     https://github.com/merenlab/anvio/releases/download/v8/anvio-8.tar.gz \
     -o anvio-8.tar.gz &&
@@ -131,7 +142,7 @@ mkenv plasx "
     -c anaconda -c conda-forge -c bioconda \
     --override-channels --strict-channel-priority \
     numpy pandas scipy scikit-learn numba python-blosc mmseqs2=10.6d92c git >/dev/null &&
-  log "plasx: downloading, see: https://github.com/michaelkyu/PlasX" &&
+  log \"plasx: downloading, see: https://github.com/michaelkyu/PlasX\" &&
   rm -rf PlasX &&
   git clone https://github.com/michaelkyu/PlasX PlasX >/dev/null &&
   cd PlasX
@@ -144,8 +155,8 @@ mkenv hotspot "
   echo '==> hotspot: downloading' &&
   rm -rf HOTSPOT &&
   git clone https://github.com/Orin-beep/HOTSPOT HOTSPOT >/dev/null &&
-  log "hotspot: installing, see: https://github.com/Orin-beep/HOTSPOT" &&
-  log "hotspot: additionally adding krona: https://github.com/marbl/Krona/wiki" &&
+  log \"hotspot: installing, see: https://github.com/Orin-beep/HOTSPOT\" &&
+  log \"hotspot: additionally adding krona: https://github.com/marbl/Krona/wiki\" &&
   $PM env create -y -f HOTSPOT/environment.yaml -n hotspot >/dev/null &&
   $PM install -y -n hotspot -c bioconda krona >/dev/null
 "
