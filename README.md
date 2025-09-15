@@ -4,7 +4,7 @@ PLASWRAP is pipeline for plasmidomic analysis, which identify high-confidence pa
 
 # Download the rep
 ```bash
-git clone https://github.com/braddmg/PLASPWRAP
+git clone https://github.com/braddmg/PLASWRAP
 cd PLASWRAP
 ```
 # run script to install environments
