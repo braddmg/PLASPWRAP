@@ -18,9 +18,33 @@ Select the destination folder with "-d" and the number of threads with "-t"
 conda activate plaswrap
 bash download_data.sh -d ~/databases/plaswrap -t 16
 ```
-# Test the installation 
+# Classify 
+The "classify" function runs a Snakemake workflow to assign plasmid contigs using four tools: plasx, plasclass, platon, and plasmidhunter. You can choose which tools to run instead of using all four. Provide the database path you configured with the earlier download script. The input may include multiple FASTA files; each file is treated as an independent sample. Snakemake can distribute the threads you specify across parallel jobs (across samples and/or steps), allowing multiple tasks to run concurrently.
 ```bash
 plaswrap --help
 plaswrap classify -h
+
+usage: plaswrap classify [-h] [-i DATA_DIR] [-o OUTPUT_DIR] [-d DB_ROOT] [-m MODE] [-s SPLITS] [-t CORES] [--tools TOOLS] [-n]
+                         [--run-incomplete] [--unlock]
+
+options:
+  -h, --help            show this help message and exit
+  -i DATA_DIR, --input-dir DATA_DIR
+                        Input FASTA data directory
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        Output directory
+  -d DB_ROOT, --db DB_ROOT
+                        Root folder containing databases
+  -m MODE, --mode MODE  Platon mode: sensitivity,accuracy,specificity (default: accuracy, see
+                        https://github.com/oschwengers/platon)
+  -s SPLITS, --splits SPLITS
+                        Split total cores across N parallel jobs; per-job threads= cores/splits
+  -t CORES, --threads CORES
+                        Total scheduler cores for Snakemake
+  --tools TOOLS         Comma-separated tools to run (default: "all"). Options: plasx, platon, plasmidhunter, plasclass
+  -n, --dry-run         Show what would run without executing
+  --run-incomplete      re-run incomplete job
+  --unlock              unlock snakemake work
+
 ```
 
