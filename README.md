@@ -49,3 +49,84 @@ options:
 
 ```
 
+# Refining
+
+After running all tools, use the refine function with the classify output as its only input.<br/>
+You can set:<br/>
+
+- the minimum number of tools that must agree for a contig to be kept as a plasmid (k-of-n), and<br/>
+
+- a single score threshold applied to both PLASX and PlasClass.<br/>
+
+Defaults:<br/>
+
+- Balance mode: keeps contigs classified by 3/4 tools with a score ≥ 0.75.<br/>
+
+- High-precision mode: keeps contigs classified by 4/4 tools with a score ≥ 0.90.<br/>
+
+Outputs:<br/>
+
+- An UpSet plot summarizing per-tool and intersection results,<br/>
+
+- A TSV with assignment results for each sample, plus a merged TSV across all samples, and<br/>
+
+- A plasmids/ folder containing the potential plasmid contigs per sample.<br/>
+
+```bash
+usage: plaswrap refine [-h] [-i INPUT_DIR] [-o OUTPUT_DIR] [-m {balance,precision}] [--threshold THRESHOLD]
+                       [--min-tools MIN_TOOLS] [--run-tools RUN_TOOLS] [--samples SAMPLES [SAMPLES ...]]
+
+options:
+  -h, --help            show this help message and exit
+  -i INPUT_DIR, --input-dir INPUT_DIR
+                        Input directory where classify outputs exist
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        Directory to write refining results (default: same as --input-dir)
+  -m {balance,precision}, --mode {balance,precision}
+                        In balance mode, plasmids are considered valid if identified by at least 3 out of 4 tools
+                        (plasx/plasclass score = 0.75), whereas in precision mode, plasmids must be identified by all 4 tools
+                        (score = 0.9)
+  --threshold THRESHOLD
+                        Manual threshold for plasclass and plasx (overrides mode selection)
+  --min-tools MIN_TOOLS
+                        Manual number of tools required (overrides mode selection)
+  --run-tools RUN_TOOLS
+                        Comma-separated tools enabled
+  --samples SAMPLES [SAMPLES ...]
+                        List of sample names; if omitted, attempts to infer from <outdir>/anvio/*.fa
+```
+
+# Host Taxonomic Assigment
+Use the GetTaxa function to infer the potential host taxonomy of plasmids by calling HOTSPOT. It creates an output folder containing:<br/>
+
+- HOTSPOT taxonomy results, <br/>
+
+- a corrected CSV with full plasmid taxonomy (phylum → species), and <br/>
+
+- an interactive Krona plot of the taxonomy. <br/>
+
+You can enable HOTSPOT’s accurate mode if desired. <br/>
+If you also provide a folder with FASTQ files, the function will estimate contig abundance across samples using CoverM. You may choose the abundance method (e.g., RPKM, TPM). Other CoverM options are fixed in this wrapper; however, because CoverM is installed in the plaswrap environment, you can run it independently to customize additional parameters.
+
+```bash
+usage: plaswrap GetTaxa [-h] -i INPUT_DIR -d DATABASE -o OUTPUT_DIR [-t THREADS] [--fastq-files FASTQ_DIR]
+                        [--method COVERM_METHOD] [--accurate]
+
+options:
+  -h, --help            show this help message and exit
+  -i INPUT_DIR, --input-dir INPUT_DIR
+                        Input folder
+  -d DATABASE, --database DATABASE
+                        Databases root
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        Output directory
+  -t THREADS, --threads THREADS
+                        Threads
+  --fastq-files FASTQ_DIR
+                        Folder with paired FASTQs. (*[1,2].fastq, *[1,2].fastq.gz, *[1,2].fq or *[1,2].fq.gz
+  --method COVERM_METHOD
+                        CoverM contig method (default: rpkm), see https://wwood.github.io/CoverM/coverm-contig.html
+  --accurate            Enable HOTSPOT accurate (Monte Carlo) mode, see https://github.com/Orin-beep/HOTSPOT
+
+```
+# References
