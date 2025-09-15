@@ -1,6 +1,6 @@
 # PLASPWRAP
 PLASWRAP is pipeline for plasmidomic analysis, which identify high-confidence palsmid contigs from metagenomic datasets and assign taxonomy using different tools
-
+![PLASWRAP flow](https://raw.githubusercontent.com/braddmg/images/main/plaswrap_flow.png)
 
 # Download the rep
 ```bash
@@ -23,3 +23,4 @@ bash download_data.sh -d ~/databases/plaswrap -t 16
 plaswrap --help
 plaswrap classify -h
 ```
+
