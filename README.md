@@ -95,7 +95,8 @@ options:
   --samples SAMPLES [SAMPLES ...]
                         List of sample names; if omitted, attempts to infer from <outdir>/anvio/*.fa
 ```
-
+Upset plot example:
+![Upset plot](https://raw.githubusercontent.com/braddmg/images/main/venn_plasmids_upset.png)
 # Host Taxonomic Assigment
 Use the GetTaxa function to infer the potential host taxonomy of plasmids by calling HOTSPOT. It creates an output folder containing:<br/>
 
