@@ -75,7 +75,7 @@ if env_exists "$ENV_NAME" && (( FORCE == 0 )); then
   log "plaswrap: exists → skip"
 else
   [[ -d "$TARGET" ]] && rm -rf "$TARGET"
-  log "plaswrap: downloading release 0.1.1"
+  log "plaswrap: downloading release 0.1.2"
   if command -v wget >/dev/null 2>&1; then
     wget -q --no-check-certificate -O plaswrap.tar.gz https://github.com/braddmg/PLASWRAP/releases/download/v0.1.2/plaswrap-0.1.2-linux-x86_64.tar.gz
   else
