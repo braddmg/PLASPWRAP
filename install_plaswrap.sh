@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 STEP="init"
-# >>> DEBUG addition: show failing command, line, and exit code
+# DEBUG 
 trap 'rc=$?; echo "❌ Failed at step: ${STEP}" >&2; echo "   Command: $BASH_COMMAND" >&2; echo "   Location: ${BASH_SOURCE[0]}:${LINENO} (exit $rc)" >&2' ERR
 
 log() { printf '[%s] %s\n' "$(date +'%F %T')" "$*" >&2; }
@@ -27,7 +27,7 @@ else
   exit 1
 fi
 
-# Get the conda/mamba base and sanitize odd outputs like "base environment : /path"
+# Get the conda/mamba base 
 BASE="$($PM info --base)"
 BASE="${BASE##*: }"
 
