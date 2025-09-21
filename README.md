@@ -131,3 +131,10 @@ options:
 
 ```
 # References
+- Eren, A. M., Kiefl, E., Shaiber, A., Veseli, I., Miller, S. E., Schechter, M. S., ... & Willis, A. D. (2021). Community-led, integrated, reproducible multi-omics with anvi’o. Nature microbiology, 6(1), 3-6.<br/>
+- Yu, M. K., Fogarty, E. C., & Eren, A. M. (2024). Diverse plasmid systems and their ecology across human gut metagenomes revealed by PlasX and MobMess. Nature Microbiology, 9(3), 830-847.<br/>
+- Tian, R., Zhou, J., & Imanian, B. (2024). PlasmidHunter: accurate and fast prediction of plasmid sequences using gene content profile and machine learning. Briefings in Bioinformatics, 25(4).<br/>
+- Pellow, D., Mizrahi, I., & Shamir, R. (2020). PlasClass improves plasmid sequence classification. PLoS computational biology, 16(4), e1007781.<br/>
+- Schwengers, O., Barth, P., Falgenhauer, L., Hain, T., Chakraborty, T., & Goesmann, A. (2020). Platon: identification and characterization of bacterial plasmid contigs in short-read draft assemblies exploiting protein sequence-based replicon distribution scores. Microbial genomics, 6(10), e000398.<br/>
+- Ji, Y., Shang, J., Tang, X., & Sun, Y. (2023). HOTSPOT: hierarchical host prediction for assembled plasmid contigs with transformer. Bioinformatics, 39(5), btad283.<br/>
+- Aroney, S. T., Newell, R. J., Nissen, J. N., Camargo, A. P., Tyson, G. W., & Woodcroft, B. J. (2025). CoverM: read alignment statistics for metagenomics. Bioinformatics, 41(4), btaf147.<br/>
