@@ -1,4 +1,4 @@
-# PLASPWRAP
+# PLASWRAP
 PLASWRAP is a pipeline for plasmidomic analysis that identifies high-confidence plasmid contigs from metagenomic datasets and assigns taxonomy using different tools.
 ![PLASWRAP flow](https://raw.githubusercontent.com/braddmg/images/main/plaswrap_flow.png)
 
