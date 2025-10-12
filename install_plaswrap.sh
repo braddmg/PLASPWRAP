@@ -79,9 +79,9 @@ else
   [[ -d "$TARGET" ]] && rm -rf "$TARGET"
   log "plaswrap: downloading release 0.1.3"
   if command -v wget >/dev/null 2>&1; then
-    wget -q --no-check-certificate -O plaswrap.tar.gz https://github.com/braddmg/PLASWRAP/releases/download/v0.1.2/plaswrap-0.1.2-linux-x86_64.tar.gz
+    wget -q --no-check-certificate -O plaswrap.tar.gz https://github.com/braddmg/PLASWRAP/releases/download/v0.1.4/plaswrap-0.1.4-linux-x86_64.tar.gz
   else
-    curl -sL -o plaswrap.tar.gz https://github.com/braddmg/PLASWRAP/releases/download/v0.1.3/plaswrap-0.1.3-linux-x86_64.tar.gz
+    curl -sL -o plaswrap.tar.gz https://github.com/braddmg/PLASWRAP/releases/download/v0.1.4/plaswrap-0.1.4-linux-x86_64.tar.gz
   fi
   [[ -s plaswrap.tar.gz ]] || { echo "failed to download PLASWRAP, please contact: bradd.mendoza@ucr.ac.cr" >&2; exit 2; }
   log "plaswrap: extracting files"
