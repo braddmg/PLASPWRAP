@@ -46,17 +46,19 @@ fi
 add_headless_hooks() {
   local tgt="$1"
   mkdir -p "$tgt/etc/conda/activate.d" "$tgt/etc/conda/deactivate.d" "$HOME/.config/matplotlib"
+
   cat > "$tgt/etc/conda/activate.d/zz-plaswrap-headless.sh" <<'EOF'
 export QT_QPA_PLATFORM=${QT_QPA_PLATFORM:-offscreen}
 export MPLBACKEND=${MPLBACKEND:-Agg}
 EOF
+
   cat > "$tgt/etc/conda/deactivate.d/zz-plaswrap-headless.sh" <<'EOF'
-unset QT_QPA_PLATFORМ
+unset QT_QPA_PLATFORM
 unset MPLBACKEND
 EOF
+
   echo "backend: Agg" > "$HOME/.config/matplotlib/matplotlibrc"
 }
-
 if (( FORCE == 1 )); then
   STEP="force cleanup of old env folders"
   log "Removing existing env folders (force)"
