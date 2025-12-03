@@ -19,7 +19,21 @@ singularity exec plaswrap-0.1.4.sif plaswrap --help
 ```
 Example help output:
 ```
+```bash
+singulairty exec plaswrap-0.1.4.sif plaswrap --help
 usage: plaswrap [-h] {classify,refine,GetTaxa} ...
+
+PLASWRAP launcher
+
+positional arguments:
+  {classify,refine,GetTaxa}
+    classify            Run the classification pipeline (snakemake)
+    refine              Refine potential plasmidic contigs
+    GetTaxa             Run host taxonomy identification and (if selected) calculate coverage abundance
+
+options:
+  -h, --help            show this help message and exit
+```
 ```
 
 ## Databases
@@ -48,36 +62,63 @@ Each FASTA file in the input directory is treated as one sample. Snakemake distr
 
 ```bash
 plaswrap classify -h
-```
 
-Key arguments:
-- `-i` input FASTA directory
-- `-o` output directory
-- `-d` database root
-- `--tools` tools to run (default: all)
-- `-t` total cores
-- `-s` split cores into N jobs (per‑job threads = cores/N)
+usage: plaswrap classify [-h] [-i DATA_DIR] [-o OUTPUT_DIR] [-d DB_ROOT] [-m MODE] [-s SPLITS] [-t CORES] [--tools TOOLS] [-n]
+                         [--run-incomplete] [--unlock]
+
+options:
+  -h, --help            show this help message and exit
+  -i DATA_DIR, --input-dir DATA_DIR
+                        Input FASTA data directory
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        Output directory
+  -d DB_ROOT, --db DB_ROOT
+                        Root folder containing databases
+  -m MODE, --mode MODE  Platon mode: sensitivity,accuracy,specificity (default: accuracy, see
+                        https://github.com/oschwengers/platon)
+  -s SPLITS, --splits SPLITS
+                        Split total cores across N parallel jobs; per-job threads= cores/splits
+  -t CORES, --threads CORES
+                        Total scheduler cores for Snakemake
+  --tools TOOLS         Comma-separated tools to run (default: "all"). Options: plasx, platon, plasmidhunter, plasclass
+  -n, --dry-run         Show what would run without executing
+  --run-incomplete      re-run incomplete job
+  --unlock              unlock snakemake work
+
+```
 
 ## 2. Refinement
 Uses classification outputs to identify high‑confidence plasmids.
-
-You can control:
-- **Minimum tools required** (k‑of‑n)
-- **Score threshold** (applied to PlasX and PlasClass)
-- **Mode**:  
-  - *balance*: ≥3/4 tools, score ≥0.75  
-  - *precision*: 4/4 tools, score ≥0.90
 
 Outputs:
 - UpSet plot of tool intersections
 - Per‑sample TSV + merged TSV
 - `plasmids/` folder containing predicted plasmid contigs
-
+- 
 Example help:
 ```bash
-plaswrap refine -h
-```
+usage: plaswrap refine [-h] [-i INPUT_DIR] [-o OUTPUT_DIR] [-m {balance,precision}] [--threshold THRESHOLD]
+                       [--min-tools MIN_TOOLS] [--run-tools RUN_TOOLS] [--samples SAMPLES [SAMPLES ...]]
 
+options:
+  -h, --help            show this help message and exit
+  -i INPUT_DIR, --input-dir INPUT_DIR
+                        Input directory where classify outputs exist
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        Directory to write refining results (default: same as --input-dir)
+  -m {balance,precision}, --mode {balance,precision}
+                        In balance mode, plasmids are considered valid if identified by at least 3 out of 4 tools
+                        (plasx/plasclass score = 0.75), whereas in precision mode, plasmids must be identified by all 4 tools
+                        (score = 0.9)
+  --threshold THRESHOLD
+                        Manual threshold for plasclass and plasx (overrides mode selection)
+  --min-tools MIN_TOOLS
+                        Manual number of tools required (overrides mode selection)
+  --run-tools RUN_TOOLS
+                        Comma-separated tools enabled
+  --samples SAMPLES [SAMPLES ...]
+                        List of sample names; if omitted, attempts to infer from <outdir>/anvio/*.fa
+```
 ![Upset plot](https://raw.githubusercontent.com/braddmg/images/main/venn_plasmids_upset.png)
 
 ## 3. Host taxonomic assignment
@@ -91,7 +132,24 @@ Outputs include:
 
 Example:
 ```bash
-plaswrap GetTaxa -h
+usage: plaswrap GetTaxa [-h] -i INPUT_DIR -d DATABASE -o OUTPUT_DIR [-t THREADS] [--fastq-files FASTQ_DIR]
+                        [--method COVERM_METHOD] [--accurate]
+
+options:
+  -h, --help            show this help message and exit
+  -i INPUT_DIR, --input-dir INPUT_DIR
+                        Input folder
+  -d DATABASE, --database DATABASE
+                        Databases root
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        Output directory
+  -t THREADS, --threads THREADS
+                        Threads
+  --fastq-files FASTQ_DIR
+                        Folder with paired FASTQs. (*[1,2].fastq, *[1,2].fastq.gz, *[1,2].fq or *[1,2].fq.gz
+  --method COVERM_METHOD
+                        CoverM contig method (default: rpkm), see https://wwood.github.io/CoverM/coverm-contig.html
+  --accurate            Enable HOTSPOT accurate (Monte Carlo) mode, see https://github.com/Orin-beep/HOTSPOT
 ```
 
 # References
