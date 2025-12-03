@@ -15,11 +15,6 @@ PLASWRAP is easiest to use through Singularity or Docker because it relies on mu
 ## Singularity
 Download the `.sif` image and run:
 ```bash
-singularity exec plaswrap-0.1.4.sif plaswrap --help
-```
-Example help output:
-```
-```bash
 singulairty exec plaswrap-0.1.4.sif plaswrap --help
 usage: plaswrap [-h] {classify,refine,GetTaxa} ...
 
@@ -34,7 +29,6 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
 ```
-```
 
 ## Databases
 Download required databases (choose download folder with `-d` and threads with `-t`):
@@ -43,7 +37,7 @@ singularity exec plaswrap-0.1.4.sif download_data.sh -d ~/databases/plaswrap -t 
 ```
 
 ## Manual installation (conda)
-If not using Singularity, run the installer to create all required environments: plaswrap, anvio‑8, plasx, platon, plasclass, and hotspot.
+If not using Singularity or docker, run the installer to create all required environments: plaswrap, anvio‑8, plasx, platon, plasclass, and hotspot.
 ```bash
 bash install_plaswrap.sh --force #force will remove environments with same names and reinstall them.
 ```
