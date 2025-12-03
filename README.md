@@ -31,7 +31,7 @@ singularity exec plaswrap-0.1.4.sif download_data.sh -d databases -t 64
 ## Manual installation (conda)
 If not using Singularity, run the installer to create all required environments: plaswrap, anvio‑8, plasx, platon, plasclass, and hotspot.
 ```bash
-bash install_plaswrap.sh --force
+bash install_plaswrap.sh --force #force will remove environments with the same names and reinstalle them.
 ```
 Then activate and download databases:
 ```bash
