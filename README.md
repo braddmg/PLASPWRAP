@@ -2,23 +2,56 @@
 PLASWRAP is a pipeline for plasmidomic analysis that identifies high-confidence plasmid contigs from metagenomic datasets and assigns taxonomy using different tools.
 ![PLASWRAP flow](https://raw.githubusercontent.com/braddmg/images/main/plaswrap_flow.png)
 
-# Download the repository
+## Download the repository
 ```bash
 git clone https://github.com/braddmg/PLASWRAP
 cd PLASWRAP
 ```
-# Run the installation script
+# Installation
+The easiest way to use plaswrap is via Singularity or docker, due to the presence of multiple conda environments that have to be set up.
+
+## Singularity
+Fron singularity you just need to download the image from xxxx 
+
+Then just execute the command:
+```bash
+singulairty exec plaswrap-0.1.4.sif plaswrap --help
+usage: plaswrap [-h] {classify,refine,GetTaxa} ...
+
+PLASWRAP launcher
+
+positional arguments:
+  {classify,refine,GetTaxa}
+    classify            Run the classification pipeline (snakemake)
+    refine              Refine potential plasmidic contigs
+    GetTaxa             Run host taxonomy identification and (if selected) calculate coverage abundance
+
+options:
+  -h, --help            show this help message and exit
+```
+## Databases
+Once that works, you can download the databases with the next command where -d is the path where the dbs will be downloaded and -t the number of threads to use to process them: 
 
 ```bash
-bash install_plaswrap.sh --force #force option will remove any existing environments named anvio-8, plasx, platon, plasclass, and hotspot, and create new ones
+singularity exec plaswrap-0.1.4.sif download_data.sh -d databases -t 64
+ 
 ```
-# Activate PLASWRAP and download databases
+## Conda
+If you do not have singularity and want to try manual installation we fist recommend the use of the installation script. This automatically will install the enxt environments: plaswrap, [anvio-8](https://anvio.org/install/linux/stable/), [plasx](https://github.com/michaelkyu/PlasX), [platon](https://github.com/oschwengers/platon), [plasclass](https://github.com/Shamir-Lab/PlasClass) and [hotspot](https://github.com/Orin-beep/HOTSPOT). 
+If any of them fail, yo can try manually install them. 
+
+```bash
+bash install_plaswrap.sh --force #force option will remove any existing environments named plaswrap, anvio-8, plasx, platon, plasclass, and hotspot, and create new ones
+```
+## Activate PLASWRAP and download databases
 Select the destination folder with "-d" and the number of threads with "-t"
 ```bash
 conda activate plaswrap
 bash download_data.sh -d ~/databases/plaswrap -t 16
 ```
-# Classify 
+# Usage
+
+## Classify 
 The "classify" function runs a Snakemake workflow to assign plasmid contigs using four tools: plasx, plasclass, platon, and plasmidhunter. You can choose which tools to run instead of using all four. <br/> Provide the database path you configured with the earlier download script. The input may include multiple FASTA files; each file is treated as an independent sample. <br/>
 Snakemake can distribute the threads you specify across parallel jobs (across samples and/or steps), allowing multiple tasks to run concurrently.
 ```bash
@@ -49,7 +82,7 @@ options:
 
 ```
 
-# Refining
+## Refining
 
 After running all tools, use the refine function with the classify output as its only input.<br/>
 You can set:<br/>
@@ -97,7 +130,7 @@ options:
 ```
 Upset plot example:
 ![Upset plot](https://raw.githubusercontent.com/braddmg/images/main/venn_plasmids_upset.png)
-# Host Taxonomic Assigment
+## Host Taxonomic Assigment
 Use the GetTaxa function to infer the potential host taxonomy of plasmids by calling HOTSPOT. It creates an output folder containing:<br/>
 
 - HOTSPOT taxonomy results, <br/>
