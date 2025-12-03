@@ -84,11 +84,6 @@ options:
 ## 2. Refinement
 Uses classification outputs to identify high‑confidence plasmids.
 
-Outputs:
-- UpSet plot of tool intersections
-- Per‑sample TSV + merged TSV
-- `plasmids/` folder containing predicted plasmid contigs
-- 
 Example help:
 ```bash
 usage: plaswrap refine [-h] [-i INPUT_DIR] [-o OUTPUT_DIR] [-m {balance,precision}] [--threshold THRESHOLD]
@@ -113,16 +108,15 @@ options:
   --samples SAMPLES [SAMPLES ...]
                         List of sample names; if omitted, attempts to infer from <outdir>/anvio/*.fa
 ```
+Outputs:
+- UpSet plot of tool intersections
+- Per‑sample TSV + merged TSV
+- `plasmids/` folder containing predicted plasmidic contigs
+
 ![Upset plot](https://raw.githubusercontent.com/braddmg/images/main/venn_plasmids_upset.png)
 
 ## 3. Host taxonomic assignment
 `GetTaxa` infers plasmid host taxonomy using HOTSPOT and optionally computes abundance using CoverM if FASTQ files are provided.
-
-Outputs include:
-- HOTSPOT results
-- Corrected taxonomy table (phylum → species)
-- Krona interactive plot
-- (Optional) abundance matrix
 
 Example:
 ```bash
@@ -146,11 +140,17 @@ options:
   --accurate            Enable HOTSPOT accurate (Monte Carlo) mode, see https://github.com/Orin-beep/HOTSPOT
 ```
 
+Outputs include:
+- HOTSPOT results
+- Corrected taxonomy table (phylum → species)
+- Krona interactive plot
+- (Optional) abundance matrix
+
 # References
-- Eren et al. (2021) *Nature Microbiology*
-- Yu et al. (2024) *Nature Microbiology*
-- Tian et al. (2024) *Briefings in Bioinformatics*
-- Pellow et al. (2020) *PLoS Comput Biol*
-- Schwengers et al. (2020) *Microbial Genomics*
-- Ji et al. (2023) *Bioinformatics*
-- Aroney et al. (2025) *Bioinformatics*
+- Eren, A. M., Kiefl, E., Shaiber, A., Veseli, I., Miller, S. E., Schechter, M. S., ... & Willis, A. D. (2021). Community-led, integrated, reproducible multi-omics with anvi’o. Nature microbiology, 6(1), 3-6.<br/>
+- Yu, M. K., Fogarty, E. C., & Eren, A. M. (2024). Diverse plasmid systems and their ecology across human gut metagenomes revealed by PlasX and MobMess. Nature Microbiology, 9(3), 830-847.<br/>
+- Tian, R., Zhou, J., & Imanian, B. (2024). PlasmidHunter: accurate and fast prediction of plasmid sequences using gene content profile and machine learning. Briefings in Bioinformatics, 25(4).<br/>
+- Pellow, D., Mizrahi, I., & Shamir, R. (2020). PlasClass improves plasmid sequence classification. PLoS computational biology, 16(4), e1007781.<br/>
+- Schwengers, O., Barth, P., Falgenhauer, L., Hain, T., Chakraborty, T., & Goesmann, A. (2020). Platon: identification and characterization of bacterial plasmid contigs in short-read draft assemblies exploiting protein sequence-based replicon distribution scores. Microbial genomics, 6(10), e000398.<br/>
+- Ji, Y., Shang, J., Tang, X., & Sun, Y. (2023). HOTSPOT: hierarchical host prediction for assembled plasmid contigs with transformer. Bioinformatics, 39(5), btad283.<br/>
+- Aroney, S. T., Newell, R. J., Nissen, J. N., Camargo, A. P., Tyson, G. W., & Woodcroft, B. J. (2025). CoverM: read alignment statistics for metagenomics. Bioinformatics, 41(4), btaf147.<br/>
