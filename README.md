@@ -13,7 +13,12 @@ cd PLASWRAP
 PLASWRAP is easiest to use through Singularity because it relies on multiple conda environments.
 
 ## Singularity
-Download the `.sif` image and run:
+Download the `.sif` image 
+```bash
+wget https://zenodo.org/records/17915106/files/plaswrap-0.1.4.sif?download=1 -O plaswrap-0.1.4.sif
+```
+
+and run:
 ```bash
 singulairty exec plaswrap-0.1.4.sif plaswrap --help
 usage: plaswrap [-h] {classify,refine,GetTaxa} ...
