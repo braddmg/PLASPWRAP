@@ -10,7 +10,7 @@ cd PLASWRAP
 ```
 
 # Installation
-PLASWRAP is easiest to use through Singularity or Docker because it relies on multiple conda environments.
+PLASWRAP is easiest to use through Singularity because it relies on multiple conda environments.
 
 ## Singularity
 Download the `.sif` image and run:
