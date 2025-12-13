@@ -59,7 +59,7 @@ Runs a Snakemake workflow using four tools: PlasX, PlasClass, Platon, and Plasmi
 Each FASTA file in the input directory is treated as one sample. 
 
 Snakemake can distribute work across the CPU threads you provide by using the `-t` and `-s` options. <br/>
-For example, if you have 64 cores available and want to allocate up to 16 cores per job, you can run Snakemake with `-t 64` and specify `-s 4`. <br/>
+For example, if you have 64 cores available and want to allocate up to 16 cores per job, you can run PLASWRAP with `-t 64` and specify `-s 4`. <br/>
 This will run up to four jobs simultaneously, with each job using 16 threads. <br/>
 If you do not specify -s, each job will use all the available threads.
 
