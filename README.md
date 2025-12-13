@@ -56,8 +56,8 @@ bash download_data.sh -d ~/databases/plaswrap -t 64
 
 ## 1. Classification
 Runs a Snakemake workflow using four tools: PlasX, PlasClass, Platon, and PlasmidHunter. You may choose a subset of tools.
-
 Each FASTA file in the input directory is treated as one sample. 
+
 Snakemake can distribute work across the CPU threads you provide by using the `-t` and `-s` options. <br/>
 For example, if you have 64 cores available and want to allocate up to 16 cores per job, you can run Snakemake with `-t 64` and specify `-s 4`. <br/>
 This will run up to four jobs simultaneously, with each job using 16 threads. <br/>
