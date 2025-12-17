@@ -88,6 +88,11 @@ options:
   --run-incomplete      re-run incomplete job
   --unlock              unlock snakemake work
 
+# Download the example data 
+wget https://zenodo.org/records/17915106/files/SRR4101185.fa?download=1 -O data/SRR4101185.fa
+
+#Run classify function
+plaswrap classify -i data -o classified_plasmids -d ~/databases/plaswrap -t 64 
 ```
 
 ## 2. Refinement
@@ -116,6 +121,9 @@ options:
                         Comma-separated tools enabled
   --samples SAMPLES [SAMPLES ...]
                         List of sample names; if omitted, attempts to infer from <outdir>/anvio/*.fa
+# Run refine function
+
+plaswrap refine -i classified_plasmids -o refined_plasmids -m balance
 ```
 Outputs:
 - UpSet plot of tool intersections
