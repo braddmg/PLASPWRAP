@@ -155,6 +155,8 @@ options:
   --method COVERM_METHOD
                         CoverM contig method (default: rpkm), see https://wwood.github.io/CoverM/coverm-contig.html
   --accurate            Enable HOTSPOT accurate (Monte Carlo) mode, see https://github.com/Orin-beep/HOTSPOT
+
+plaswrap GetTaxa -i refined_plasmids -d ~/databases/plaswrap -o taxonomy_output -t 64 --accurate
 ```
 
 Outputs include:
