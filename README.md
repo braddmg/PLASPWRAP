@@ -130,7 +130,7 @@ Outputs:
 - Per‑sample TSV + merged TSV
 - `plasmids/` folder containing predicted plasmidic contigs
 
-![Upset plot](https://raw.githubusercontent.com/braddmg/images/main/venn_plasmids_upset.png)
+![Upset plot](https://raw.githubusercontent.com/braddmg/images/main/plaswrap_example_refine.png)
 
 ## 3. Host taxonomic assignment
 `GetTaxa` infers plasmid host taxonomy using HOTSPOT and optionally computes abundance using CoverM if FASTQ files are provided.
