@@ -158,13 +158,27 @@ options:
 
 plaswrap GetTaxa -i refined_plasmids -d ~/databases/plaswrap -o taxonomy_output -t 64 --accurate
 ```
-
 Outputs include:
 - HOTSPOT results
 - Corrected taxonomy table (phylum → species)
 - Krona interactive plot
 - (Optional) abundance matrix
 
+| Contig                     | Phylum            | Class               | Order              | Family             | Genus           | Species |
+|----------------------------|-------------------|---------------------|--------------------|--------------------|-----------------|---------|
+| SRR4101185_000000000586     | Pseudomonadota    | Alphaproteobacteria | Hyphomicrobiales   | Rhizobiaceae       | –               | –       |
+| SRR4101185_000000001440     | Pseudomonadota    | Alphaproteobacteria | Rhodobacterales    | Paracoccaceae      | –               | –       |
+| SRR4101185_000000001544     | Pseudomonadota    | Gammaproteobacteria | Enterobacterales   | Enterobacteriaceae | Klebsiella      | –       |
+| SRR4101185_000000001550     | Pseudomonadota    | Alphaproteobacteria | –                  | –                  | –               | –       |
+| SRR4101185_000000002054     | Pseudomonadota    | Gammaproteobacteria | Enterobacterales   | Enterobacteriaceae | Klebsiella      | –       |
+| SRR4101185_000000002154     | Actinomycetota    | Actinomycetes       | Mycobacteriales    | Corynebacteriaceae | Corynebacterium | –       |
+| SRR4101185_000000002389     | Pseudomonadota    | Alphaproteobacteria | Hyphomicrobiales   | –                  | –               | –       |
+| SRR4101185_000000002612     | Bacillota         | –                   | –                  | –                  | –               | –       |
+| SRR4101185_000000002654     | Pseudomonadota    | Gammaproteobacteria | Vibrionales        | Vibrionaceae       | –               | –       |
+| SRR4101185_000000002696     | Pseudomonadota    | Alphaproteobacteria | Hyphomicrobiales   | Brucellaceae       | Brucella        | –       |
+| SRR4101185_000000002997     | Pseudomonadota    | Gammaproteobacteria | Enterobacterales   | Enterobacteriaceae | Salmonella      | –       |
+
+![Upset plot](https://raw.githubusercontent.com/braddmg/images/main/krona_plaswrap.png)
 # References
 - Eren, A. M., Kiefl, E., Shaiber, A., Veseli, I., Miller, S. E., Schechter, M. S., ... & Willis, A. D. (2021). Community-led, integrated, reproducible multi-omics with anvi’o. Nature microbiology, 6(1), 3-6.<br/>
 - Yu, M. K., Fogarty, E. C., & Eren, A. M. (2024). Diverse plasmid systems and their ecology across human gut metagenomes revealed by PlasX and MobMess. Nature Microbiology, 9(3), 830-847.<br/>
